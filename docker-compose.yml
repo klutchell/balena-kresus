@@ -1,0 +1,59 @@
+version: "2.1"
+
+volumes:
+  kresus:
+  postgres:
+  duplicati:
+
+services:
+  # https://kresus.org/en/install-docker.html
+  kresus:
+    build: kresus
+    environment:
+      KRESUS_DB_TYPE: postgres
+      KRESUS_DB_HOST: postgres
+      KRESUS_DB_PORT: 5432
+      KRESUS_DB_NAME: kresus
+      KRESUS_DB_USERNAME: kresus
+      KRESUS_DB_PASSWORD: kresus
+    ports:
+      - 80:9876/tcp
+    volumes:
+      - kresus:/home/user/data
+    depends_on:
+      - postgres
+
+  # https://hub.docker.com/_/postgres/
+  postgres:
+    build: postgres
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: kresus
+      POSTGRES_PASSWORD: kresus
+      POSTGRES_DB: kresus
+
+  # https://hub.docker.com/_/postgres/
+  sqldump:
+    build: postgres
+    command: "/sqldump.sh"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: kresus
+      POSTGRES_PASSWORD: kresus
+      POSTGRES_DB: kresus 
+
+  # https://hub.docker.com/r/linuxserver/duplicati
+  duplicati:
+    image: linuxserver/duplicati
+    environment:
+      PUID: "0"
+      PGID: "0"
+      CLI_ARGS: --webservice-interface=any
+    ports:
+      - 8200:8200/tcp
+    volumes:
+      - duplicati:/config
+      - kresus:/source/kresus
+      - postgres:/source/postgres
