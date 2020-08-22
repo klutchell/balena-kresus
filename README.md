@@ -57,6 +57,7 @@ Kyle Harding <https://klutchell.dev>
 ## References
 
 - <https://kresus.org/en/install-docker.html>
+- <https://kresus.org/en/admin.html#with-environment-variables>
 - <https://framagit.org/kresusapp/kresus/-/blob/0.16.0/support/docker>
 - <https://hub.docker.com/_/postgres/>
 - <https://linux.die.net/man/1/pg_dump>
